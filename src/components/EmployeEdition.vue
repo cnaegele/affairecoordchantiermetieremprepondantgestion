@@ -1,0 +1,222 @@
+<template>
+<div class="employes-container">
+    <h3>Employes correspondants pour le métier<br>{{ lesDatas.metier }}</h3>
+    
+    <!-- Message si aucun employé -->
+    <div v-if="lesDatas.employesRepondants.length === 0" class="no-data">
+      Aucun employé trouvé pour ce métier
+    </div>
+    
+    <!-- Liste des employés -->
+    <div v-else class="employes-list">
+      <div 
+        v-for="employe in lesDatas.employesRepondants" 
+        :key="employe.id" 
+        :index="employe.id" 
+        class="employe-card"
+        :class="{ 'employe-inactif': !employe.actif }"
+      >
+        <!-- Nom et prénom avec tooltip unité -->
+        <div class="employe-info">
+          <span 
+            class="employe-nom" 
+            :title="employe.unite"
+          >
+            {{ employe.nom }} {{ employe.prenom }}
+          </span>
+          <span v-if="!employe.actif" class="badge-inactif">Inactif</span>
+        </div>
+        
+        <!-- Bouton supprimer -->
+        <div class="employe-actions">
+          <button 
+            @click="supprime(employe.id)"
+            class="btn-delete"
+            :title="`Supprimer ${employe.nom} ${employe.prenom}`"
+          >
+            <!-- Icône poubelle (vous pouvez utiliser une icône de votre choix) -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import type { Employe } from '@/stores/datastore.ts'
+import type { ApiResponseEmpS, ApiResponseMessage } from '@/axioscalls.ts'
+import { ref, watch } from 'vue'
+import { useDataStore } from '@/stores/datastore.ts'
+import { getEmployesRepondant, supprimeDroitEdition } from '@/axioscalls.ts'
+const lesDatas = useDataStore()
+watch(() => lesDatas.idMetier, async (newValue) => {
+    console.log(`métier choisi: ${lesDatas.idMetier}`)
+    const response: ApiResponseEmpS = await getEmployesRepondant(newValue)
+    lesDatas.employesRepondants = response.success && response.data ? response.data : []
+    console.log(lesDatas.employesRepondants)
+})
+
+// Fonction supprime 
+const supprime = async (id: number) => {
+  /*
+  console.log(`Suppression demandée pour l'employé ID: ${id}`)
+  const response: ApiResponseMessage = await supprimeDroitEdition(lesDatas.idService, id)
+  const responseReaff: ApiResponseEmpS = await getEmployesEdition(lesDatas.idService)
+  lesDatas.employesEdition = responseReaff.success && responseReaff.data ? responseReaff.data : []
+  */
+}
+</script>
+
+<style scoped>
+.employes-container {
+  padding: 20px;
+}
+
+.no-data {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 40px;
+}
+
+.employes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.employe-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto auto;
+  gap: 15px;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  transition: box-shadow 0.2s;
+}
+
+.employe-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.employe-inactif {
+  opacity: 0.7;
+  background-color: #f8f9fa;
+}
+
+.employe-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.employe-nom {
+  font-weight: 500;
+  cursor: help;
+  color: #333;
+}
+
+.badge-inactif {
+  background: #ffc107;
+  color: #000;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75em;
+  font-weight: 500;
+}
+
+.employe-montant {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.employe-montant label {
+  font-size: 0.9em;
+  color: #666;
+  white-space: nowrap;
+}
+
+.input-montant {
+  width: 100px;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.input-montant:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.currency {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.employe-principal {
+  display: flex;
+  justify-content: center;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.radio-text {
+  color: #666;
+}
+
+.employe-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete:hover {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.btn-delete:active {
+  transform: scale(0.95);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .employe-card {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    text-align: left;
+  }
+  
+  .employe-montant,
+  .employe-principal,
+  .employe-actions {
+    justify-self: start;
+  }
+}
+</style>
