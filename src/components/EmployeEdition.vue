@@ -46,27 +46,24 @@
 </template>
 
 <script setup lang="ts">
-import type { Employe } from '@/stores/datastore.ts'
 import type { ApiResponseEmpS, ApiResponseMessage } from '@/axioscalls.ts'
-import { ref, watch } from 'vue'
+import { watch } from 'vue'
 import { useDataStore } from '@/stores/datastore.ts'
-import { getEmployesRepondant, supprimeDroitEdition } from '@/axioscalls.ts'
+import { getEmployesRepondant, supprimeRepondant } from '@/axioscalls.ts'
 const lesDatas = useDataStore()
 watch(() => lesDatas.idMetier, async (newValue) => {
     console.log(`métier choisi: ${lesDatas.idMetier}`)
     const response: ApiResponseEmpS = await getEmployesRepondant(newValue)
     lesDatas.employesRepondants = response.success && response.data ? response.data : []
-    console.log(lesDatas.employesRepondants)
+    //console.log(lesDatas.employesRepondants)
 })
 
 // Fonction supprime 
 const supprime = async (id: number) => {
-  /*
   console.log(`Suppression demandée pour l'employé ID: ${id}`)
-  const response: ApiResponseMessage = await supprimeDroitEdition(lesDatas.idService, id)
-  const responseReaff: ApiResponseEmpS = await getEmployesEdition(lesDatas.idService)
-  lesDatas.employesEdition = responseReaff.success && responseReaff.data ? responseReaff.data : []
-  */
+  const response: ApiResponseMessage = await supprimeRepondant(lesDatas.idMetier, id)
+  const responseReaff: ApiResponseEmpS = await getEmployesRepondant(lesDatas.idMetier)
+  lesDatas.employesRepondants = responseReaff.success && responseReaff.data ? responseReaff.data : []
 }
 </script>
 

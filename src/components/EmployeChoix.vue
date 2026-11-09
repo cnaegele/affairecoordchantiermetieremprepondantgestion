@@ -25,7 +25,7 @@ import type { Employe } from '@/stores/datastore.ts'
 import type { EmployeChoix, ApiResponseMessage, ApiResponseEmpS } from '@/axioscalls.ts'
 import {reactive, ref} from 'vue'
 import { useDataStore } from '@/stores/datastore.ts'
-import { getEmployesListe, sauveDroitEdition, getEmployesRepondant } from '@/axioscalls.ts'
+import { getEmployesListe, sauveRepondant, getEmployesRepondant } from '@/axioscalls.ts'
 const state = reactive({
     critere: "",
     bRetInactif: false
@@ -35,7 +35,7 @@ const employesChoix = ref<EmployeChoix[]>([])
 
 async function listeEmployes() {
     employesChoix.value = await getEmployesListe(state.critere, state.bRetInactif)
-    console.log(employesChoix.value)
+    //console.log(employesChoix.value)
 }
 
 const employeEditionAjout = async (employeId: number) => {
@@ -45,7 +45,7 @@ const employeEditionAjout = async (employeId: number) => {
         const employeDejaChoisi: Employe | undefined = lesDatas.employesRepondants.find(employe => employe.id === employeId)
         if (!employeDejaChoisi) {
             console.log(`Employé à ajouter: ${employeId} ${lesDatas.idMetier}`)
-            const response: ApiResponseMessage = await sauveDroitEdition(lesDatas.idMetier, employeId)
+            const response: ApiResponseMessage = await sauveRepondant(lesDatas.idMetier, employeId)
             const responseReaff: ApiResponseEmpS = await getEmployesRepondant(lesDatas.idMetier)
             lesDatas.employesRepondants = responseReaff.success && responseReaff.data ? responseReaff.data : []
         }     

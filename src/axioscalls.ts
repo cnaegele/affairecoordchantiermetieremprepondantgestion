@@ -58,7 +58,7 @@ export async function getDataUserInfo(groupeSecurite: string): Promise<Utilisate
     const url: string = `${server}${page}`
     const params = new URLSearchParams([['groupesecurite', groupeSecurite]])
     const response: AxiosResponse<Utilisateur> = await axios.get(url, { params })
-    console.log(response.data)
+    //console.log(response.data)
     return response.data
 }
 
@@ -72,7 +72,7 @@ export async function getMetiers(): Promise<ApiResponseMetiers> {
             "message": `ok`,
             "data": response.data
         }
-        console.log(respData)
+        //console.log(respData)
         return respData
     } catch (error) {
         return traiteAxiosError(error as AxiosError)
@@ -90,7 +90,7 @@ export async function getEmployesRepondant(idMetier: number): Promise<ApiRespons
             "message": `ok`,
             "data": response.data
         }
-        console.log(respData)
+        //console.log(respData)
         return respData
     } catch (error) {
         return traiteAxiosError(error as AxiosError)
@@ -105,13 +105,13 @@ export async function getEmployesListe(critere: string, bretInactif: boolean): P
     return response.data
 }
 
-export async function supprimeDroitEdition(idOrgunit: number, idEmploye: number): Promise<ApiResponseMessage> {
+export async function supprimeRepondant(idMetier: number, idEmploye: number): Promise<ApiResponseMessage> {
     const odata = {
-        idorgunit: idOrgunit,
+        idmetier: idMetier,
         idemploye: idEmploye
     }
     const jdata: string = JSON.stringify(odata)
-    const page: string = '/goeland/gestion_spec/afffactureint_droitedition/axios/afffactureint_empedition_supprime.php'
+    const page: string = '/goeland/gestion_spec/affrmcoordchantiermetieremploye_gestion/axios/affrmcoordchantier_metier_employe_repondant_supprime.php'
     const url: string = `${server}${page}`
     try {
         const response: ApiResponseMessage = await axios.post(url, jdata, {
@@ -119,20 +119,20 @@ export async function supprimeDroitEdition(idOrgunit: number, idEmploye: number)
                 'Content-Type': 'application/json'
             }
         })
-        console.log(response)
+        //console.log(response)
         return response
     } catch (error) {
         return traiteAxiosError(error as AxiosError)
     }
 }
 
-export async function sauveDroitEdition(idOrgunit: number, idEmploye: number): Promise<ApiResponseMessage> {
+export async function sauveRepondant(idMetier: number, idEmploye: number): Promise<ApiResponseMessage> {
     const odata = {
-        idorgunit: idOrgunit,
+        idmetier: idMetier,
         idemploye: idEmploye
     }
     const jdata: string = JSON.stringify(odata)
-    const page: string = '/goeland/gestion_spec/afffactureint_droitedition/axios/afffactureint_empedition_sauve.php'
+    const page: string = '/goeland/gestion_spec/affrmcoordchantiermetieremploye_gestion/axios/affrmcoordchantier_metier_employe_repondant_sauve.php'
     const url: string = `${server}${page}`
     try {
         const response: ApiResponseMessage = await axios.post(url, jdata, {
@@ -140,7 +140,7 @@ export async function sauveDroitEdition(idOrgunit: number, idEmploye: number): P
                 'Content-Type': 'application/json'
             }
         })
-        console.log(response)
+        //console.log(response)
         return response
     } catch (error) {
         return traiteAxiosError(error as AxiosError)
